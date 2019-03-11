@@ -12,42 +12,37 @@ rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
 
 rootServer = rootServers[6] #DOD NIC
 
-def debugOutput(str):
-    if debuggingEnabled:
-        print(str)
-
 def main(domainStr):
-    debugOutput("starting query for ", domainStr)
+    print("starting query for ", domainStr)
     recursiveNSResolver(domainStr, rootServer)
 
 def recursiveNSResolver(domainStr, server):
-    debugOutput('querying', server, 'for domain', domainStr)
+    print('querying', server, 'for domain', domainStr)
     r = queryServer(domainStr, 'A', server).__str__()
 
     if len(r.answer) > 0:
 
-        debugOutout('answer section has len: ')
-        debugOutput(len(r.answer))
+        debugOutout('answer section has len:', len(r.answer))
         answerStr = r.answer[0].to_text()
-        debugOutput(answerStr)
+        print('using first line', answerStr)
         pattern = domainStr + r'\. \d+ IN A (\d+\.\d+\.\d+\.\d+)'
         match = re.search(pattern, answerStr)
         if match:
             print(match.group(1))
             exit()
         else:
-            debugOutput('No match in answer section?')
-            debugOutput(r)
+            print('No match in answer section?')
+            print(r)
             exit()
 
     pattern = r'(\d+\.\d+\.\d+\.\d+)'
     match = re.search(pattern, r)
     if match:
-        debugOutput('match found!', match.group(1))
+        print('match found!', match.group(1))
         recursiveNSResolver(domainStr, match.group(1))
     else:
-        debugOutput('No IP found -------')
-        debugOutput(r)
+        print('No IP found -------')
+        print(r)
 
 def queryServer(qname, rdtype, serverAddr):
     q = dns.message.make_query(qname, rdtype)
