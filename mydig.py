@@ -27,7 +27,7 @@ def recursiveNSResolver(domainStr, server):
 
     if len(r.answer) > 0:
 
-        answerStr = r.answer[0].to_Text
+        answerStr = r.answer[0].to_text()
         pattern = domainStr + r'\. \d+ IN A (\d+\.\d+\.\d+\.\d+)'
         debugOutput('checking:', pattern)
         match = re.search(pattern, r)
