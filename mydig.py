@@ -20,23 +20,25 @@ def main(domainStr):
     debugOutput("starting query for ", domainStr)
     recursiveNSResolver(domainStr, rootServer)
 
-
 def recursiveNSResolver(domainStr, server):
     debugOutput('querying', server, 'for domain', domainStr)
     r = queryServer(domainStr, 'A', server).__str__()
 
     if len(r.answer) > 0:
 
+        debugOutout('answer section has len: ')
+        debugOutput(len(r.answer))
         answerStr = r.answer[0].to_text()
+        debugOutput(answerStr)
         pattern = domainStr + r'\. \d+ IN A (\d+\.\d+\.\d+\.\d+)'
-        debugOutput('checking:', pattern)
-        match = re.search(pattern, r)
+        match = re.search(pattern, answerStr)
         if match:
-            debugOutput('answer match found', match.group(1))
+            print(match.group(1))
+            exit()
+        else:
+            debugOutput('No match in answer section?')
             debugOutput(r)
             exit()
-    else:
-        debugOutput('answer not yet found')
 
     pattern = r'(\d+\.\d+\.\d+\.\d+)'
     match = re.search(pattern, r)
