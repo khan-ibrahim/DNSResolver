@@ -23,13 +23,14 @@ def recursiveNSResolver(domainStr, server):
     print('querying', server, 'for domain', domainStr)
     r = queryServer(domainStr, 'A', server)
     rStr = r.__str__()
-
+    #print(rStr)    enable for debugging; prints entire response to each request
     if len(r.answer) > 0:
 
         print('answer section has len:', len(r.answer[0]))
         answerStr = (r.answer[0]).to_text()
-        #print('using first line', answerStr)
-        pattern = domainStr + r'\. \d+ IN A (\d+\.\d+\.\d+\.\d+)'
+        print('using first line', answerStr)
+        pattern = domainStr + r'\.* \d+ IN A (\d+\.\d+\.\d+\.\d+)'
+        print('using pattern', pattern)
         match = re.search(pattern, answerStr)
         if match:
             print('ANSWER MATCH FOUND:', match.group(1))
@@ -38,14 +39,20 @@ def recursiveNSResolver(domainStr, server):
             print('time is', str(time.time()-startTime))
             exit()
         else:
-            print('No match in answer section?')
-            print(rStr)
-            exit()
+            pattern = domainStr + r'\.* \d+ IN CNAME (.*)'
+            matchC = re.search(pattern, answerStr)
+            if matchC:
+                print('CNAME MATCH FOUND:', matchC.group(1))
+                print('resolving CNAME...')
+                main(matchC.group(1))
+            else:
+                print('No match in answer section?')
+                print(rStr)
+                exit()
 
     pattern = r'(\d+\.\d+\.\d+\.\d+)'
     match = re.search(pattern, rStr)
     if match:
-        print('match found!', match.group(1))
         recursiveNSResolver(domainStr, match.group(1))
     else:
         print('No IP found -------')
