@@ -2,6 +2,7 @@ import sys
 import dns.query
 import dns.message
 import re
+import time
 
 __author__ = "Ibrahim Khan"
 debuggingEnabled = True
@@ -17,32 +18,38 @@ def main(domainStr):
     recursiveNSResolver(domainStr, rootServer)
 
 def recursiveNSResolver(domainStr, server):
+    startTime = time.time()
+
     print('querying', server, 'for domain', domainStr)
-    r = queryServer(domainStr, 'A', server).__str__()
+    r = queryServer(domainStr, 'A', server)
+    rStr = r.__str__()
 
     if len(r.answer) > 0:
 
-        debugOutout('answer section has len:', len(r.answer))
-        answerStr = r.answer[0].to_text()
-        print('using first line', answerStr)
+        print('answer section has len:', len(r.answer[0]))
+        answerStr = (r.answer[0]).to_text()
+        #print('using first line', answerStr)
         pattern = domainStr + r'\. \d+ IN A (\d+\.\d+\.\d+\.\d+)'
         match = re.search(pattern, answerStr)
         if match:
-            print(match.group(1))
+            print('ANSWER MATCH FOUND:', match.group(1))
+            print('LAST RESPONSE SHOWN BELOW')
+            print(rStr)
+            print('time is', str(time.time()-startTime))
             exit()
         else:
             print('No match in answer section?')
-            print(r)
+            print(rStr)
             exit()
 
     pattern = r'(\d+\.\d+\.\d+\.\d+)'
-    match = re.search(pattern, r)
+    match = re.search(pattern, rStr)
     if match:
         print('match found!', match.group(1))
         recursiveNSResolver(domainStr, match.group(1))
     else:
         print('No IP found -------')
-        print(r)
+        print(rStr)
 
 def queryServer(qname, rdtype, serverAddr):
     q = dns.message.make_query(qname, rdtype)
