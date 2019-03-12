@@ -12,10 +12,13 @@ rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
     '192.36.148.17', '192.58.128.30', '193.0.14.129', '202.12.27.33']
 
 rootServer = rootServers[6] #DOD NIC
+startTime = 0.0
+
 
 def main(domainStr):
     print("starting query for ", domainStr)
-    recursiveNSResolver(domainStr, rootServer)
+    ip = recursiveNSResolver(domainStr, rootServer)
+    return ip
 
 def recursiveNSResolver(domainStr, server):
     print('querying', server, 'for domain', domainStr)
@@ -30,18 +33,20 @@ def recursiveNSResolver(domainStr, server):
         pattern = domainStr + r'\.* \d+ IN A (\d+\.\d+\.\d+\.\d+)'
         match = re.search(pattern, answerStr)
         if match:
-            print('\n\n----ANSWER MATCH FOUND----:', match.group(1), '\n')
+            ip = str(match.group(1))
+            print('\n\n----ANSWER MATCH FOUND----:', ip, '\n')
             print('time is', str(time.time()-startTime), 'seconds')
             print('LAST RESPONSE SHOWN BELOW\n')
             print(rStr)
-            exit()
+            print(ip)
+            return ip
         else:
             pattern = domainStr + r'\.* \d+ IN CNAME (.*)'
             matchC = re.search(pattern, answerStr)
             if matchC:
                 print('\nCNAME MATCH FOUND:', matchC.group(1))
                 print('resolving CNAME...\n')
-                main(matchC.group(1))
+                return main(matchC.group(1))
             else:
                 print('No match in non-empty answer section?')
                 print(rStr)
@@ -50,11 +55,20 @@ def recursiveNSResolver(domainStr, server):
     pattern = r'(\d+\.\d+\.\d+\.\d+)'
     match = re.search(pattern, rStr)
     if match:
-        recursiveNSResolver(domainStr, match.group(1))
+        return recursiveNSResolver(domainStr, match.group(1))
     else:
-        print('\n\n----NO IP FOUND----\n')
-        print('last result shown below')
-        print(rStr)
+        pattern = domainStr + r'\.* \d+ IN NS (.*)'
+        match = re.search(pattern, rStr)
+        if match:
+            print('\n--NS FOUND--:', match.group(1), '\n')
+            print('resolving NS IP...')
+            nsip = main(match.group(1))
+            print('SAVING NAMESERVER IP AS', nsip)
+            return recursiveNSResolver(domainStr, nsip)
+        else:
+            print('\n\n----NO IP FOUND----\n')
+            print('last result shown below')
+            print(rStr)
 
 def queryServer(qname, rdtype, serverAddr):
     q = dns.message.make_query(qname, rdtype)
