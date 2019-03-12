@@ -8,7 +8,7 @@ import re
 from io import StringIO
 import mydig
 
-useMydig = True
+useMydig = False
 
 topWebsites = ['google.com','youtube.com','facebook.com','baidu.com', \
         'wikipedia.org','qq.com', 'yahoo.com', 'taobao.com', 'tmall.com', \
