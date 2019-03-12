@@ -1,9 +1,9 @@
+#Must use Python 3.7 on Unix
 #tests dig for either all 25 top websites or specified number of top websites
 
 import sys
 import subprocess
 import re
-
 
 topWebsites = ['google.com','youtube.com','facebook.com','baidu.com', \
         'wikipedia.org','qq.com', 'yahoo.com', 'taobao.com', 'tmall.com', \
@@ -12,22 +12,29 @@ topWebsites = ['google.com','youtube.com','facebook.com','baidu.com', \
         'reddit.com', '360.cn', 'blogspot.com', 'login.tmall.com', \
         'netflix.com', 'linkedin.com']
 
-def testResolveTime(websiteDomain):
+def digResolveTime(websiteDomain):
     normal = subprocess.run(['dig', 'google.com'], stdout=subprocess.PIPE, \
             stderr=subprocess.PIPE, check=True, text='True')
-    
     outputStr = str(normal.stdout)
+
     pattern = r'Query time: (d+) ms'
     match = re.search(pattern, outputStr)
     if match:
-        return int(match.group(1))
+        time = int(match.group(1)) / 1000.0
     else:
         print('ERROR, TIME NOT FOUND?')
         print(outputStr)
+        return 10   #large value if not found
 
 def main():
+    results = []
     for website in topWebsites:
-        resolve(website)
+        currentResults[]
+        currentResults.append(website)
+        for a in range(10):
+            currrentResults.append(digResolveTime(website))
+        results.append(currentResults)
+    return results
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
