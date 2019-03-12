@@ -5,10 +5,11 @@ import re
 import time
 import datetime
 
+#WORKS FOR PYTHON 3.7
 __author__ = "Ibrahim Khan"
 
-
 showWork = False    #set True to see how address was resolved
+
 rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
     '192.203.230.10', '192.5.5.241', '192.112.36.4', '198.97.190.53', \
     '192.36.148.17', '192.58.128.30', '193.0.14.129', '202.12.27.33']
@@ -106,12 +107,16 @@ def queryServer(qname, rdtype, serverAddr):
     r = dns.query.udp(q, serverAddr)
     return r
 
+def doEverything(domain):
+        global mydigTime
+        mydigTime = time.time()
+        global requestedDomain
+        requestedDomain = domain
+        main(requestedDomain)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("too few arguments. usage: python3 mydig.py <domainName>")
         exit()
     else:
-        mydigTime = time.time()
-        #global requestedDomain
-        requestedDomain = sys.argv[1]
-        main(requestedDomain)
+        doEverything(sys.argv[1])
