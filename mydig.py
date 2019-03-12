@@ -8,7 +8,7 @@ import datetime
 __author__ = "Ibrahim Khan"
 
 
-showWork = True    #set True to see how address was resolved
+showWork = False    #set True to see how address was resolved
 rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
     '192.203.230.10', '192.5.5.241', '192.112.36.4', '198.97.190.53', \
     '192.36.148.17', '192.58.128.30', '193.0.14.129', '202.12.27.33']
