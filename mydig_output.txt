@@ -1,0 +1,9 @@
+
+QUESTION
+google.co.jp. IN A
+;ANSWER
+google.co.jp. 300 IN A 172.217.7.3
+
+Query time: 604.1364669799805 msec
+WHEN: 2019-03-12 10:51:28.560296
+MSG SIZE recvd: 71
