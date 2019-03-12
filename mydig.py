@@ -3,21 +3,27 @@ import dns.query
 import dns.message
 import re
 import time
+import datetime
 
 __author__ = "Ibrahim Khan"
-debuggingEnabled = True
 
 rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
     '192.203.230.10', '192.5.5.241', '192.112.36.4', '198.97.190.53', \
     '192.36.148.17', '192.58.128.30', '193.0.14.129', '202.12.27.33']
 
 rootServer = rootServers[6] #DOD NIC
-startTime = 0.0
-
+mydigTime = 0.0
+whenDateTime = datetime.datetime.now()
+messageLength = 0
+requestedDomain = ''
 
 def main(domainStr):
     print("starting query for ", domainStr)
     ip = recursiveNSResolver(domainStr, rootServer)
+    if domainStr == requestedDomain:
+        print('Query time:', str(mydigTime*1000), 'msec')
+        print('WHEN:', str(whenDateTime))
+        print('MSG SIZE recvd:', messageLength)
     return ip
 
 def recursiveNSResolver(domainStr, server):
@@ -34,11 +40,19 @@ def recursiveNSResolver(domainStr, server):
         match = re.search(pattern, answerStr)
         if match:
             ip = str(match.group(1))
-            print('\n\n----ANSWER MATCH FOUND----:', ip, '\n')
-            print('time is', str(time.time()-startTime), 'seconds')
-            print('LAST RESPONSE SHOWN BELOW\n')
-            print(rStr)
-            print(ip)
+            if domainStr == requestedDomain:
+                global mydigTime
+                mydigTime = time.time()- mydigTime
+                whenDateTime = datetime.datetime.now()
+                pattern = r''';(QUESTION\n.*\n;ANSWER\n.*\n);AUTHORITY'''
+                match = re.search(pattern, rStr)
+                if match:
+                    print('\n' + match.group(1))
+                    global messageLength
+                    messageLength = len(match.group(1))
+                else:
+                    print('PARSE ERROR')
+                    print(rStr, '\n')
             return ip
         else:
             pattern = domainStr + r'\.* \d+ IN CNAME (.*)'
@@ -63,7 +77,7 @@ def recursiveNSResolver(domainStr, server):
             print('\n--NS FOUND--:', match.group(1), '\n')
             print('resolving NS IP...')
             nsip = main(match.group(1))
-            print('SAVING NAMESERVER IP AS', nsip)
+            print('\n--NS IP RESOLVED--', nsip, '\n')
             return recursiveNSResolver(domainStr, nsip)
         else:
             print('\n\n----NO IP FOUND----\n')
@@ -80,5 +94,6 @@ if __name__ == "__main__":
         print("too few arguments. usage: python3 mydig.py <domainName>")
         exit()
     else:
-        startTime = time.time()
-        main(sys.argv[1])
+        mydigTime = time.time()
+        requestedDomain = sys.argv[1]
+        main(requestedDomain)
