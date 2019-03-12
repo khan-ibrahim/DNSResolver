@@ -13,14 +13,16 @@ topWebsites = ['google.com','youtube.com','facebook.com','baidu.com', \
         'netflix.com', 'linkedin.com']
 
 def digResolveTime(websiteDomain):
-    normal = subprocess.run(['dig', 'google.com'], stdout=subprocess.PIPE, \
+    normal = subprocess.run(['dig', websiteDomain], stdout=subprocess.PIPE, \
             stderr=subprocess.PIPE, check=True, text='True')
     outputStr = str(normal.stdout)
 
-    pattern = r'Query time: (d+) ms'
+    pattern = r'Query time: (\d+) ms'
     match = re.search(pattern, outputStr)
     if match:
+        print(outputStr)
         time = int(match.group(1)) / 1000.0
+        return time
     else:
         print('ERROR, TIME NOT FOUND?')
         print(outputStr)
@@ -29,16 +31,20 @@ def digResolveTime(websiteDomain):
 def main():
     results = []
     for website in topWebsites:
-        currentResults[]
+        currentResults = []
         currentResults.append(website)
         for a in range(10):
-            currrentResults.append(digResolveTime(website))
+            currentResults.append(digResolveTime(website))
         results.append(currentResults)
+    #print(results)
+    for websiteData in results:
+        print(websiteData)
     return results
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         main()
+        topWebsites = topWebsites[8:10]
     else:
         topWebsites = topWebsites[:int(sys.argv[1])]
         main()
