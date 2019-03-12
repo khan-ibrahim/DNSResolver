@@ -32,11 +32,11 @@ def main(domainStr):
 
 def recursiveNSResolver(domainStr, server):
     if showWork:
-        print('querying', server, 'for domain', domainStr)
+        print('--querying', server, 'for domain', domainStr)
     
     r = queryServer(domainStr, 'A', server)
     rStr = r.__str__()
-    ##print(rStr)    enable for debugging; prints entire response to each request
+    #print(rStr)    #enable for debugging; prints entire response to each request
     
     if len(r.answer) > 0:
         ##print('answer section has len:', len(r.answer[0]))
@@ -46,7 +46,7 @@ def recursiveNSResolver(domainStr, server):
         if match:
             ip = str(match.group(1))
             global requestedDomain
-            if domainStr == requestedDomain:
+            if domainStr.lower() == requestedDomain:
                 global mydigTime
                 mydigTime = time.time()- mydigTime
                 whenDateTime = datetime.datetime.now()
@@ -111,7 +111,7 @@ def doEverything(domain):
         global mydigTime
         mydigTime = time.time()
         global requestedDomain
-        requestedDomain = domain
+        requestedDomain = domain.lower()
         main(requestedDomain)
 
 if __name__ == "__main__":
