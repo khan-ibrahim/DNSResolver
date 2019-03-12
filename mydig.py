@@ -49,12 +49,18 @@ def recursiveNSResolver(domainStr, server):
                 global mydigTime
                 mydigTime = time.time()- mydigTime
                 whenDateTime = datetime.datetime.now()
-                pattern = r''';(QUESTION\n.*\n;ANSWER\n.*\n);AUTHORITY'''
-                match = re.search(pattern, rStr)
-                if match:
-                    print('\n' + match.group(1))
+                #pattern = r''';(QUESTION\n.*\n;ANSWER\n[.*\n]*);AUTHORITY'''
+                #match = re.search(pattern, rStr)
+                #if match:
+                #    print('\n' + match.group(1))
+                #    global messageLength
+                #    messageLength = len(match.group(1))
+                start = rStr.find('QUESTION')
+                end = rStr.find(';AUTHORITY')
+                if start > -1 and end >-1:
+                    print('\n', rStr[start:end])
                     global messageLength
-                    messageLength = len(match.group(1))
+                    messageLength = len(rStr[start:end])
                 else:
                     print('PARSE ERROR')
                     print(rStr, '\n')
