@@ -5,7 +5,7 @@ INSTRUCTIONS FOR mydig.py
 Tested for Python 3.6
   python3 mydig.py <domainname>
 If you want to pipe to output, use
-  python3 mydig.py | mydig_output.txt
+  python3 mydig.py > mydig_output.txt
 If you want to output how the address was resolved, set showWork = True
 
 INSTRUCTIONS FOR digTester.py
