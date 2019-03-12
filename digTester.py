@@ -20,7 +20,7 @@ def digResolveTime(websiteDomain):
     pattern = r'Query time: (\d+) ms'
     match = re.search(pattern, outputStr)
     if match:
-        print(outputStr)
+        #print(outputStr)   enable for debugging
         time = int(match.group(1)) / 1000.0
         return time
     else:
@@ -38,7 +38,7 @@ def main():
         results.append(currentResults)
     #print(results)
     for websiteData in results:
-        print(websiteData)
+        print(','.join(map(str, websiteData)))
     return results
 
 if __name__ == '__main__':
