@@ -1,5 +1,6 @@
 #Must use Python 3.7 on Unix
 #tests dig for either all 25 top websites or specified number of top websites
+#uses either dig or mydig
 
 import sys
 import subprocess
@@ -40,6 +41,22 @@ def main():
     for websiteData in results:
         print(','.join(map(str, websiteData)))
     return results
+
+def mydigResolveTime(websiteDomain):
+    normal = subprocess.run(['python3', 'mydig.py',websiteDomain], stdout=subprocess.PIPE, \
+            stderr=subprocess.PIPE, check=True, text='True')
+    outputStr = str(normal.stdout)
+
+    pattern = r'Query time: (\d+\.\d+) ms'
+    match = re.search(pattern, outputStr)
+    if match:
+        #print(outputStr)   enable for debugging
+        time = int(match.group(1)) / 1000.0
+        return time
+    else:
+        print('ERROR, TIME NOT FOUND?')
+        print(outputStr)
+        return 10   #large value if not found
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
