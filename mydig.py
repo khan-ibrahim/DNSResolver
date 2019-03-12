@@ -7,6 +7,8 @@ import datetime
 
 __author__ = "Ibrahim Khan"
 
+
+showWork = False    #set True to see how address was resolved
 rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
     '192.203.230.10', '192.5.5.241', '192.112.36.4', '198.97.190.53', \
     '192.36.148.17', '192.58.128.30', '193.0.14.129', '202.12.27.33']
@@ -18,7 +20,8 @@ messageLength = 0
 requestedDomain = ''
 
 def main(domainStr):
-    print("starting query for ", domainStr)
+    if showWork:
+        print("starting query for ", domainStr)
     ip = recursiveNSResolver(domainStr, rootServer)
     if domainStr == requestedDomain:
         print('Query time:', str(mydigTime*1000), 'msec')
@@ -27,14 +30,15 @@ def main(domainStr):
     return ip
 
 def recursiveNSResolver(domainStr, server):
-    print('querying', server, 'for domain', domainStr)
+    if showWork:
+        print('querying', server, 'for domain', domainStr)
     
     r = queryServer(domainStr, 'A', server)
     rStr = r.__str__()
-    #print(rStr)    enable for debugging; prints entire response to each request
+    ##print(rStr)    enable for debugging; prints entire response to each request
     
     if len(r.answer) > 0:
-        #print('answer section has len:', len(r.answer[0]))
+        ##print('answer section has len:', len(r.answer[0]))
         answerStr = (r.answer[0]).to_text()
         pattern = domainStr + r'\.* \d+ IN A (\d+\.\d+\.\d+\.\d+)'
         match = re.search(pattern, answerStr)
@@ -58,8 +62,9 @@ def recursiveNSResolver(domainStr, server):
             pattern = domainStr + r'\.* \d+ IN CNAME (.*)'
             matchC = re.search(pattern, answerStr)
             if matchC:
-                print('\nCNAME MATCH FOUND:', matchC.group(1))
-                print('resolving CNAME...\n')
+                if showWork:
+                    print('\nCNAME MATCH FOUND:', matchC.group(1))
+                    print('resolving CNAME...\n')
                 return main(matchC.group(1))
             else:
                 print('No match in non-empty answer section?')
@@ -74,10 +79,12 @@ def recursiveNSResolver(domainStr, server):
         pattern = domainStr + r'\.* \d+ IN NS (.*)'
         match = re.search(pattern, rStr)
         if match:
-            print('\n--NS FOUND--:', match.group(1), '\n')
-            print('resolving NS IP...')
+            if showWork:
+                print('\n--NS FOUND--:', match.group(1), '\n')
+                print('resolving NS IP...')
             nsip = main(match.group(1))
-            print('\n--NS IP RESOLVED--', nsip, '\n')
+            if showWork:
+                print('\n--NS IP RESOLVED--', nsip, '\n')
             return recursiveNSResolver(domainStr, nsip)
         else:
             print('\n\n----NO IP FOUND----\n')
