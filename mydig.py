@@ -8,7 +8,7 @@ import datetime
 __author__ = "Ibrahim Khan"
 
 
-showWork = False    #set True to see how address was resolved
+showWork = True    #set True to see how address was resolved
 rootServers = ['198.41.0.4', '199.9.14.201', '192.33.4.12', '199.7.91.13', \
     '192.203.230.10', '192.5.5.241', '192.112.36.4', '198.97.190.53', \
     '192.36.148.17', '192.58.128.30', '193.0.14.129', '202.12.27.33']
@@ -44,6 +44,7 @@ def recursiveNSResolver(domainStr, server):
         match = re.search(pattern, answerStr)
         if match:
             ip = str(match.group(1))
+            global requestedDomain
             if domainStr == requestedDomain:
                 global mydigTime
                 mydigTime = time.time()- mydigTime
@@ -62,6 +63,8 @@ def recursiveNSResolver(domainStr, server):
             pattern = domainStr + r'\.* \d+ IN CNAME (.*)'
             matchC = re.search(pattern, answerStr)
             if matchC:
+                #global requestedDomain
+                requestedDomain = matchC.group(1)
                 if showWork:
                     print('\nCNAME MATCH FOUND:', matchC.group(1))
                     print('resolving CNAME...\n')
@@ -102,5 +105,6 @@ if __name__ == "__main__":
         exit()
     else:
         mydigTime = time.time()
+        #global requestedDomain
         requestedDomain = sys.argv[1]
         main(requestedDomain)
