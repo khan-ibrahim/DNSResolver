@@ -79,7 +79,8 @@ def recursiveNSResolver(domainStr, server):
     if match:
         return recursiveNSResolver(domainStr, match.group(1))
     else:
-        pattern = domainStr + r'\.* \d+ IN NS (.*)'
+        #pattern = domainStr + r'\.* \d+ IN NS (.*)'
+        pattern = r'\.* \d+ IN NS (.*)'
         match = re.search(pattern, rStr)
         if match:
             if showWork:
