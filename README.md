@@ -7,7 +7,7 @@ Must install dnspython
 
 INSTRUCTIONS FOR mydig.py
 Tested for Python 3.7
-  python3.y mydig.py <domainname>
+  python3.7 mydig.py <domainname>
 If you want to pipe to output, use
   python3 mydig.py > mydig_output.txt
 If you want to output how the address was resolved, set showWork = True
